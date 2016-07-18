@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinqExtentions", "QueryRequest\LinqExtentions.csproj", "{CA39BE4E-1F5D-4D1D-9986-2C74FB59F61F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QueryTests", "QueryTests\QueryTests.csproj", "{61914B26-3BB0-40E6-8ABE-AB00A6EFB804}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CA39BE4E-1F5D-4D1D-9986-2C74FB59F61F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA39BE4E-1F5D-4D1D-9986-2C74FB59F61F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA39BE4E-1F5D-4D1D-9986-2C74FB59F61F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA39BE4E-1F5D-4D1D-9986-2C74FB59F61F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61914B26-3BB0-40E6-8ABE-AB00A6EFB804}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61914B26-3BB0-40E6-8ABE-AB00A6EFB804}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61914B26-3BB0-40E6-8ABE-AB00A6EFB804}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61914B26-3BB0-40E6-8ABE-AB00A6EFB804}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
