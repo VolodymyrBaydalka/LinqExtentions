@@ -12,7 +12,8 @@ namespace ZV.LinqExtentions
     public static class LinqRequestExtentions
     {
         #region Helper methods
-        public static LinqRequest Skip(this LinqRequest @this, int count) {
+        public static LinqRequest Skip(this LinqRequest @this, int count)
+        {
             @this.Skip = count;
             return @this;
         }
@@ -79,132 +80,20 @@ namespace ZV.LinqExtentions
         }
         #endregion
 
-        public static ListSubset<T> Subset<T>(this IQueryable<T> @this, LinqRequest request)
+        public static ListSubset<T> GetSubset<T>(this IQueryable<T> @this, LinqRequest request, RequestResolver resolver = null)
         {
-            IQueryable q = @this;
-            var result = new ListSubset<T> {
-                Skipped = request.Skip,
-                Taken = request.Take,
-                Items = new List<T>()
-            };
-
-            if (request.Where != null) {
-                q = q.Where(request.Where);
-
-                result.Total = q.Provider.Execute<int>(Expression.Call(typeof(Queryable), nameof(Queryable.Count), new[] { q.ElementType }, q.Expression));
-            }
-
-            var orderBy = request.OrderBy ?? new List<OrderClause>(1);
-
-            if (orderBy.Count == 0)
-            {
-                orderBy.Add(DefaultOrderClause(q.ElementType));
-            }
-
-            q = q.OrderBy(orderBy);
-            q = q.SkipTake(request.Skip, request.Take);
-
-            foreach (var item in q)
-            {
-                result.Items.Add((T)item);
-            }
-
-            if (result.Total < result.Items.Count)
-                result.Total = result.Items.Count;
-
-            return result;
+            return (resolver ?? RequestResolver.Default).Resolve(@this, request);
         }
 
-        internal static OrderClause DefaultOrderClause(Type type)
+        public static Expression ValueExpression(this WhereClause where, Type type)
         {
-            string propertyName = null;
-
-            foreach (var prop in type.GetProperties())
-            {
-                if (!prop.PropertyType.GetInterfaces().Contains(typeof(IConvertible)))
-                    continue;
-
-                if (propertyName == null || prop.IsDefined(typeof(KeyAttribute), false))
-                { 
-                    propertyName = prop.Name;
-                }
-            }
-
-            return new OrderClause { Field = propertyName };
+            var convertType = Nullable.GetUnderlyingType(type) ?? type;
+            return Expression.Constant(Convert.ChangeType(where.Value, convertType), type);
         }
 
-        internal static IQueryable OrderBy(this IQueryable q, IEnumerable<OrderClause> clauses)
+        public static Expression BuildExpression(this WhereOperator op, Expression left, Expression right)
         {
-            var ordered = false;
-            var param = Expression.Parameter(q.ElementType, "x");
-
-            foreach (var clause in clauses)
-            {
-                var methodName = clause.Direction == ListSortDirection.Ascending
-                    ? (ordered ? nameof(Queryable.ThenBy) : nameof(Queryable.OrderBy))
-                    : (ordered ? nameof(Queryable.ThenByDescending) : nameof(Queryable.OrderByDescending));
-
-                var lambda = Expression.Lambda(Expression.PropertyOrField(param, clause.Field), param);
-                q = q.Provider.CreateQuery(Expression.Call(typeof(Queryable), methodName, new[] { q.ElementType, lambda.Body.Type }, q.Expression, Expression.Quote(lambda)));
-
-                ordered = true;
-            }
-
-            return q;
-        }
-
-        internal static IQueryable SkipTake(this IQueryable q, int skip, int take)
-        {
-            if (skip != 0)
-                q = q.Provider.CreateQuery(Expression.Call(typeof(Queryable), nameof(Queryable.Skip), new[] { q.ElementType }, q.Expression, Expression.Constant(skip)));
-
-            if (take != 0)
-                q = q.Provider.CreateQuery(Expression.Call(typeof(Queryable), nameof(Queryable.Take), new[] { q.ElementType }, q.Expression, Expression.Constant(take)));
-
-            return q;
-        }
-
-        internal static IQueryable Where(this IQueryable q, IWhereClause where)
-        {
-            var param = Expression.Parameter(q.ElementType, "x");
-            var expr = Expression.Lambda(BuildExpression(param, where), param);
-
-            return q.Provider.CreateQuery(Expression.Call(typeof(Queryable), nameof(Queryable.Where), new[] { q.ElementType }, q.Expression, expr));
-        }
-
-        internal static Expression BuildExpression(ParameterExpression param, GroupedClause clause)
-        {
-            Expression result = null;
-
-            foreach (var w in clause.SubClauses)
-            {
-                var exp = BuildExpression(param, w);
-
-                result = result == null ? exp : (clause.Logic == WhereLogic.And ? Expression.AndAlso(result, exp) : Expression.OrElse(result, exp));
-            }
-
-            return result;
-        }
-
-        internal static Expression BuildExpression(ParameterExpression param, IWhereClause clause)
-        {
-            var where = clause as WhereClause;
-            var grouped = clause as GroupedClause;
-
-            if (where != null)
-                return BuildExpression(param, where);
-            if (grouped != null)
-                return BuildExpression(param, grouped);
-
-            throw new NotSupportedException("clause");
-        }
-
-        internal static Expression BuildExpression(ParameterExpression param, WhereClause where)
-        {
-            var left = Expression.PropertyOrField(param, where.Field);
-            var right = Expression.Constant(Convert.ChangeType(where.Value, left.Type), left.Type);
-
-            switch (where.Operator)
+            switch (op)
             {
                 case WhereOperator.IsEqualTo:
                     return Expression.Equal(left, right);
