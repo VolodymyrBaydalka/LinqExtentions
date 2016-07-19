@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("QueryRequest")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("LinqRequest")]
+[assembly: AssemblyDescription("Library to express simple linq query via single request object")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("QueryRequest")]
+[assembly: AssemblyCompany("zVolodymyr")]
+[assembly: AssemblyProduct("LinqRequest")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
