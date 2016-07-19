@@ -35,7 +35,7 @@ namespace QueryTests
 
             var subset = testData.AsQueryable().GetSubset(request);
 
-            Assert.AreEqual(subset.Total, 2);
+            Assert.AreEqual(subset.Total, 6);
             Assert.AreEqual(subset.Skipped, 1);
             Assert.AreEqual(subset.Taken, 2);
             Assert.AreEqual(subset.Items.Count, 2);
@@ -54,7 +54,7 @@ namespace QueryTests
 
             var subset = testData.AsQueryable().GetSubset(request);
 
-            Assert.AreEqual(subset.Total, 2);
+            Assert.AreEqual(subset.Total, 6);
             Assert.AreEqual(subset.Skipped, 0);
             Assert.AreEqual(subset.Taken, 2);
             Assert.AreEqual(subset.Items.Count, 2);
