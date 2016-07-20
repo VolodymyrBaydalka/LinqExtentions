@@ -14,7 +14,7 @@ namespace ZV.LinqExtentions
         public override Expression Visit(Expression node)
         {
             Expression result = null;
-            return this.Swaps.TryGetValue(node, out result) ? result : base.Visit(node);
+            return node != null && this.Swaps.TryGetValue(node, out result) ? result : base.Visit(node);
         }
     }
 }
