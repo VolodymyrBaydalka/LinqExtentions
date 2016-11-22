@@ -82,24 +82,29 @@ namespace QueryTests
             Assert.AreEqual(subset.Items[1].Price, 100);
         }
 
+        class CustomRequestResolver : RequestResolver
+        {
+            protected override Expression BuildExpression(ParameterExpression param, WhereClause where)
+            {
+                if ("date".Equals(where.Field, StringComparison.OrdinalIgnoreCase))
+                {
+                    var left = FromLambda<Item, int>(i => i.Date.Day, param);
+                    return where.Operator.BuildExpression(left, where.ValueExpression(left.Type));
+                }
+
+                if ("Name".Equals(where.Field, StringComparison.OrdinalIgnoreCase))
+                {
+                    return FromLambda<Item, bool>(i => i.Name.EndsWith("4") || i.Name.EndsWith("3"), param);
+                }
+
+                return base.BuildExpression(param, where);
+            }
+        }
+
         [TestMethod]
         public void CustomResolverTest()
         {
-            RequestResolver.Default.RegisterWhereResolver<Item>((p, w) =>
-            {
-                if ("date".Equals(w.Field, StringComparison.OrdinalIgnoreCase))
-                {
-                    var left = RequestResolver.FromLambda<Item, int>(i => i.Date.Day, p);
-                    return w.Operator.BuildExpression(left, w.ValueExpression(left.Type));
-                }
-
-                if ("Name".Equals(w.Field, StringComparison.OrdinalIgnoreCase))
-                {
-                    return RequestResolver.FromLambda<Item, bool>(i => i.Name.EndsWith("4") || i.Name.EndsWith("3"), p);
-                }
-
-                return null;
-            });
+            var resolver = new CustomRequestResolver();
             
             var request = new LinqRequest
             {
@@ -107,7 +112,7 @@ namespace QueryTests
                 OrderBy = new[] { new OrderClause { Field = nameof(Item.Price) } }
             };
 
-            var subset = testData.AsQueryable().GetSubset(request);
+            var subset = testData.AsQueryable().GetSubset(request, resolver);
 
             Assert.AreEqual(subset.Total, 2);
             Assert.AreEqual(subset.Skipped, 0);

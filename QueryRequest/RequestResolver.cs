@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,23 +12,12 @@ namespace ZV.LinqExtentions
 {
     public class RequestResolver
     {
-        #region Members
-        private Dictionary<Type, Func<Expression, WhereClause, Expression>> whereResolvers = new Dictionary<Type, Func<Expression, WhereClause, Expression>>();
-        #endregion
-
         #region Properties
-        public static RequestResolver Default { get; private set; } = new RequestResolver();
+        public static RequestResolver Default { get; set; } = new RequestResolver();
         #endregion
 
         #region Implementation
-        public void RegisterWhereResolver<T>(Func<Expression, WhereClause, Expression> resolver)
-        {
-            if (resolver == null)
-                whereResolvers.Remove(typeof(T));
-            else
-                whereResolvers[typeof(T)] = resolver;
-        }
-        public ListSubset<T> Resolve<T>(IQueryable<T> queryable, LinqRequest request)
+        public virtual ListSubset<T> Resolve<T>(IQueryable<T> queryable, LinqRequest request)
         {
             IQueryable q = queryable;
             var result = new ListSubset<T>
@@ -60,7 +50,7 @@ namespace ZV.LinqExtentions
             return result;
         }
 
-        internal OrderClause DefaultOrderClause(Type type)
+        protected virtual OrderClause DefaultOrderClause(Type type)
         {
             string propertyName = null;
 
@@ -78,7 +68,7 @@ namespace ZV.LinqExtentions
             return new OrderClause { Field = propertyName };
         }
 
-        internal static IQueryable ResolveOrderBy(IQueryable q, IEnumerable<OrderClause> clauses)
+        protected virtual IQueryable ResolveOrderBy(IQueryable q, IEnumerable<OrderClause> clauses)
         {
             var ordered = false;
             var param = Expression.Parameter(q.ElementType, "x");
@@ -98,7 +88,7 @@ namespace ZV.LinqExtentions
             return q;
         }
 
-        internal IQueryable ResolveSkipTake(IQueryable q, int skip, int take)
+        protected virtual IQueryable ResolveSkipTake(IQueryable q, int skip, int take)
         {
             if (skip != 0)
                 q = q.Provider.CreateQuery(Expression.Call(typeof(Queryable), nameof(Queryable.Skip), new[] { q.ElementType }, q.Expression, Expression.Constant(skip)));
@@ -109,7 +99,7 @@ namespace ZV.LinqExtentions
             return q;
         }
 
-        internal IQueryable ResolveWhere(IQueryable q, IWhereClause where)
+        protected virtual IQueryable ResolveWhere(IQueryable q, IWhereClause where)
         {
             var param = Expression.Parameter(q.ElementType, "x");
             var expr = Expression.Lambda(BuildExpression(param, where), param);
@@ -117,7 +107,7 @@ namespace ZV.LinqExtentions
             return q.Provider.CreateQuery(Expression.Call(typeof(Queryable), nameof(Queryable.Where), new[] { q.ElementType }, q.Expression, expr));
         }
 
-        internal Expression BuildExpression(ParameterExpression param, GroupedClause clause)
+        protected virtual Expression BuildExpression(ParameterExpression param, GroupedClause clause)
         {
             Expression result = null;
 
@@ -131,7 +121,7 @@ namespace ZV.LinqExtentions
             return result;
         }
 
-        internal Expression BuildExpression(ParameterExpression param, IWhereClause clause)
+        protected virtual Expression BuildExpression(ParameterExpression param, IWhereClause clause)
         {
             var where = clause as WhereClause;
             var grouped = clause as GroupedClause;
@@ -144,22 +134,18 @@ namespace ZV.LinqExtentions
             throw new NotSupportedException("clause");
         }
 
-        internal Expression BuildExpression(ParameterExpression param, WhereClause where)
+        protected virtual Expression BuildExpression(ParameterExpression param, WhereClause where)
         {
-            Func<Expression, WhereClause, Expression> customResolver = null;
-
-            if (whereResolvers.TryGetValue(param.Type, out customResolver))
-            {
-                var custom = customResolver(param, where);
-
-                if (custom != null)
-                    return custom;
-            }
-
             var left = Expression.PropertyOrField(param, where.Field);
-            var right = where.ValueExpression(left.Type);
+            var right = Expression.Constant(GetValue(left, where));
 
             return where.Operator.BuildExpression(left, right);
+        }
+
+        protected virtual object GetValue(MemberExpression left, WhereClause where)
+        {
+            var convertType = Nullable.GetUnderlyingType(left.Type) ?? left.Type;
+            return Convert.ChangeType(where.Value, convertType);
         }
 
         public static Expression FromLambda<T1, T2>(Expression<Func<T1, T2>> expr, Expression param)
