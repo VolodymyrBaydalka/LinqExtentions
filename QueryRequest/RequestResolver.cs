@@ -137,7 +137,7 @@ namespace ZV.LinqExtentions
         protected virtual Expression BuildExpression(ParameterExpression param, WhereClause where)
         {
             var left = Expression.PropertyOrField(param, where.Field);
-            var right = Expression.Constant(GetValue(left, where));
+            var right = Expression.Constant(GetValue(left, where), left.Type);
 
             return where.Operator.BuildExpression(left, right);
         }
