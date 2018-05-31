@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ZV.LinqExtentions
+namespace DuncanApps.DataView
 {
     public class WhereClause : IWhereClause
     {

@@ -55,9 +55,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\QueryRequest\LinqExtentions.csproj">
-      <Project>{ca39be4e-1f5d-4d1d-9986-2c74fb59f61f}</Project>
-      <Name>LinqExtentions</Name>
+    <ProjectReference Include="..\DataView\DuncanApps.DataView.csproj">
+      <Project>{e34f56fa-406e-434f-86a3-f292bb369072}</Project>
+      <Name>DuncanApps.DataView</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

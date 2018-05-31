@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ZV.LinqExtentions
+namespace DuncanApps.DataView
 {
-    public class LinqRequest
+    public class DataViewRequest
     {
         public int Skip { get; set; }
         public int Take { get; set; }

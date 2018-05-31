@@ -1,30 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ZV.LinqExtentions
+namespace DuncanApps.DataView
 {
-    public static class LinqRequestExtentions
+    public static class DataViewRequestExtentions
     {
         #region Helper methods
-        public static LinqRequest Skip(this LinqRequest @this, int count)
+        public static DataViewRequest Skip(this DataViewRequest @this, int count)
         {
             @this.Skip = count;
             return @this;
         }
 
-        public static LinqRequest Take(this LinqRequest @this, int take)
+        public static DataViewRequest Take(this DataViewRequest @this, int take)
         {
             @this.Take = take;
             return @this;
         }
 
-        public static LinqRequest OrderBy(this LinqRequest @this, string field, ListSortDirection direction = ListSortDirection.Ascending)
+        public static DataViewRequest OrderBy(this DataViewRequest @this, string field, ListSortDirection direction = ListSortDirection.Ascending)
         {
             if (@this.OrderBy == null)
                 @this.OrderBy = new List<OrderClause>();
@@ -33,13 +30,13 @@ namespace ZV.LinqExtentions
             return @this;
         }
 
-        public static LinqRequest Where(this LinqRequest @this, string field, WhereOperator op, object value)
+        public static DataViewRequest Where(this DataViewRequest @this, string field, WhereOperator op, object value)
         {
             @this.Where = new WhereClause { Field = field, Operator = op, Value = value };
             return @this;
         }
 
-        public static LinqRequest Where(this LinqRequest @this, IWhereClause where)
+        public static DataViewRequest Where(this DataViewRequest @this, IWhereClause where)
         {
             @this.Where = where;
             return @this;
@@ -47,9 +44,7 @@ namespace ZV.LinqExtentions
 
         internal static GroupedClause GroupClause(this IWhereClause left, WhereLogic logic, IWhereClause right)
         {
-            var grouped = left as GroupedClause;
-
-            if (grouped == null || grouped.Logic != logic)
+            if (!(left is GroupedClause grouped) || grouped.Logic != logic)
             {
                 grouped = new GroupedClause { Logic = logic, SubClauses = new List<IWhereClause> { left } };
             }
@@ -80,7 +75,7 @@ namespace ZV.LinqExtentions
         }
         #endregion
 
-        public static ListSubset<T> GetSubset<T>(this IQueryable<T> @this, LinqRequest request, RequestResolver resolver = null)
+        public static DataView<T> ToDataView<T>(this IQueryable<T> @this, DataViewRequest request, RequestResolver resolver = null)
         {
             return (resolver ?? RequestResolver.Default).Resolve(@this, request);
         }

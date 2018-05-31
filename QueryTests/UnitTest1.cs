@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Linq;
-using ZV.LinqExtentions;
+using DuncanApps.DataView;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq.Expressions;
+using DuncanApps.DataView;
 
 namespace QueryTests
 {
@@ -28,12 +29,12 @@ namespace QueryTests
         [TestMethod]
         public void SkipTakeTest()
         {
-            var request = new LinqRequest {
+            var request = new DataViewRequest {
                 Skip = 1,
                 Take = 2
             };
 
-            var subset = testData.AsQueryable().GetSubset(request);
+            var subset = testData.AsQueryable().ToDataView(request);
 
             Assert.AreEqual(subset.Total, 6);
             Assert.AreEqual(subset.Skipped, 1);
@@ -46,13 +47,13 @@ namespace QueryTests
         [TestMethod]
         public void OrderByTest()
         {
-            var request = new LinqRequest
+            var request = new DataViewRequest
             {
                 Take = 2,
                 OrderBy = new[] { new OrderClause { Field = nameof(Item.Date) }  }
             };
 
-            var subset = testData.AsQueryable().GetSubset(request);
+            var subset = testData.AsQueryable().ToDataView(request);
 
             Assert.AreEqual(subset.Total, 6);
             Assert.AreEqual(subset.Skipped, 0);
@@ -66,13 +67,13 @@ namespace QueryTests
         [TestMethod]
         public void WhereTest()
         {
-            var request = new LinqRequest
+            var request = new DataViewRequest
             {
                 Where = new WhereClause(nameof(Item.Price), WhereOperator.IsGreaterThanOrEqualTo, 100),
                 OrderBy = new[] { new OrderClause { Field = nameof(Item.Price) } }
             };
 
-            var subset = testData.AsQueryable().GetSubset(request);
+            var subset = testData.AsQueryable().ToDataView(request);
 
             Assert.AreEqual(subset.Total, 4);
             Assert.AreEqual(subset.Skipped, 0);
@@ -106,13 +107,13 @@ namespace QueryTests
         {
             var resolver = new CustomRequestResolver();
             
-            var request = new LinqRequest
+            var request = new DataViewRequest
             {
                 Where = new WhereClause(nameof(Item.Date), WhereOperator.IsEqualTo, 14).And("Name", WhereOperator.IsEqualTo, "ignored"),
                 OrderBy = new[] { new OrderClause { Field = nameof(Item.Price) } }
             };
 
-            var subset = testData.AsQueryable().GetSubset(request, resolver);
+            var subset = testData.AsQueryable().ToDataView(request, resolver);
 
             Assert.AreEqual(subset.Total, 2);
             Assert.AreEqual(subset.Skipped, 0);

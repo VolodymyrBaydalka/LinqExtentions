@@ -6,9 +6,11 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ZV.LinqExtentions
+namespace DuncanApps.DataView
 {
-    public interface IWhereClause
+    public class GroupedClause : IWhereClause
     {
+        public WhereLogic Logic { get; set; }
+        public IList<IWhereClause> SubClauses { get; set; }
     }
 }

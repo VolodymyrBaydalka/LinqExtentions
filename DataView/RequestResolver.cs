@@ -4,11 +4,8 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ZV.LinqExtentions
+namespace DuncanApps.DataView
 {
     public class RequestResolver
     {
@@ -17,10 +14,10 @@ namespace ZV.LinqExtentions
         #endregion
 
         #region Implementation
-        public virtual ListSubset<T> Resolve<T>(IQueryable<T> queryable, LinqRequest request)
+        public virtual DataView<T> Resolve<T>(IQueryable<T> queryable, DataViewRequest request)
         {
             IQueryable q = queryable;
-            var result = new ListSubset<T>
+            var result = new DataView<T>
             {
                 Skipped = request.Skip,
                 Taken = request.Take,
@@ -123,12 +120,9 @@ namespace ZV.LinqExtentions
 
         protected virtual Expression BuildExpression(ParameterExpression param, IWhereClause clause)
         {
-            var where = clause as WhereClause;
-            var grouped = clause as GroupedClause;
-
-            if (where != null)
+            if (clause is WhereClause where)
                 return BuildExpression(param, where);
-            if (grouped != null)
+            if (clause is GroupedClause grouped)
                 return BuildExpression(param, grouped);
 
             throw new NotSupportedException("clause");

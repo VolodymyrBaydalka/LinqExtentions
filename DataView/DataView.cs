@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ZV.LinqExtentions
+namespace DuncanApps.DataView
 {
-    public class ListSubset<T>
+    public class DataView<T>
     {
         public IList<T> Items { get; set; }
         public int Skipped { get; set; }
