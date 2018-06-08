@@ -12,5 +12,20 @@ namespace DuncanApps.DataView
     {
         public WhereLogic Logic { get; set; }
         public IList<IWhereClause> SubClauses { get; set; }
+
+        public override string ToString()
+        {
+            var res = new StringBuilder("(");
+
+            for (int i = 0, len = SubClauses?.Count ?? 0; i < len; i++)
+            {
+                if (i != 0)
+                    res.Append(") ").Append(this.Logic).Append(" (");
+
+                res.Append(SubClauses[i]);
+            }
+
+            return res.Append(")").ToString();
+        }
     }
 }

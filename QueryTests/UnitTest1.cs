@@ -83,6 +83,35 @@ namespace QueryTests
             Assert.AreEqual(subset.Items[1].Price, 100);
         }
 
+        [TestMethod]
+        public void CustomConverterTest()
+        {
+            var resolver = new RequestResolver();
+
+            resolver.RegisterConverter(x =>
+            {
+                return "null".Equals(x) ? null : Convert.ToString(x);
+            });
+
+            var request = new DataViewRequest
+            {
+                Where = new WhereClause("Name", WhereOperator.IsEqualTo, "null")
+            };
+
+            var nullData = new[] {
+                new Item { Name = "Item1" },
+                new Item { Id = 1, Name = null },
+                new Item { Id = 2, Name = null }
+            };
+
+            var subset = nullData.AsQueryable().ToDataView(request, resolver);
+
+            Assert.AreEqual(subset.Total, 2);
+            Assert.AreEqual(subset.Items.Count, 2);
+            Assert.AreEqual(subset.Items[0].Id, 1);
+            Assert.AreEqual(subset.Items[1].Id, 2);
+        }
+
         class CustomRequestResolver : RequestResolver
         {
             protected override Expression BuildExpression(ParameterExpression param, WhereClause where)

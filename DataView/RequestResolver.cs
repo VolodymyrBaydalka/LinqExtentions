@@ -9,11 +9,25 @@ namespace DuncanApps.DataView
 {
     public class RequestResolver
     {
+        #region Members
+        private Dictionary<Type, Func<object, object>> _converters = new Dictionary<Type, Func<object, object>>();
+        #endregion
+
         #region Properties
         public static RequestResolver Default { get; set; } = new RequestResolver();
         #endregion
 
         #region Implementation
+        public void RegisterConverter<T>(Func<object, T> converter)
+        {
+            _converters.Add(typeof(T), x => converter(x));
+        }
+
+        public void RegisterConverter(Type type, Func<object, object> converter)
+        {
+            _converters.Add(type, converter);
+        }
+
         public virtual DataView<T> Resolve<T>(IQueryable<T> queryable, DataViewRequest request)
         {
             IQueryable q = queryable;
@@ -138,6 +152,9 @@ namespace DuncanApps.DataView
 
         protected virtual object GetValue(MemberExpression left, WhereClause where)
         {
+            if (_converters.TryGetValue(left.Type, out var convert))
+                return convert(where.Value);
+
             var convertType = Nullable.GetUnderlyingType(left.Type) ?? left.Type;
             return Convert.ChangeType(where.Value, convertType);
         }

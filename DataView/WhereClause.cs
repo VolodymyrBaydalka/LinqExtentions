@@ -23,5 +23,10 @@ namespace DuncanApps.DataView
             this.Operator = op;
             this.Value = value;
         }
+
+        public override string ToString()
+        {
+            return $"{Field} {Operator} {Value}";
+        }
     }
 }

@@ -11,5 +11,10 @@ namespace DuncanApps.DataView
     {
         public string Field { get; set; }
         public ListSortDirection Direction { get; set; }
+
+        public override string ToString()
+        {
+            return $"{Field} {Direction}";
+        }
     }
 }
