@@ -113,9 +113,13 @@ namespace DuncanApps.DataView
         protected virtual IQueryable ResolveWhere(IQueryable q, IWhereClause where)
         {
             var param = Expression.Parameter(q.ElementType, "x");
-            var expr = Expression.Lambda(BuildExpression(param, where), param);
+            var expr = BuildExpression(param, where);
 
-            return q.Provider.CreateQuery(Expression.Call(typeof(Queryable), nameof(Queryable.Where), new[] { q.ElementType }, q.Expression, expr));
+            if (expr == null)
+                return q;
+
+            return q.Provider.CreateQuery(Expression.Call(typeof(Queryable), nameof(Queryable.Where), 
+                new[] { q.ElementType }, q.Expression, Expression.Lambda(expr, param)));
         }
 
         protected virtual Expression BuildExpression(ParameterExpression param, GroupedClause clause)
@@ -125,6 +129,9 @@ namespace DuncanApps.DataView
             foreach (var w in clause.SubClauses)
             {
                 var exp = BuildExpression(param, w);
+
+                if (exp == null)
+                    continue;
 
                 result = result == null ? exp : (clause.Logic == WhereLogic.And ? Expression.AndAlso(result, exp) : Expression.OrElse(result, exp));
             }
