@@ -16,5 +16,18 @@ namespace DuncanApps.DataView
         {
             return $"{Field} {Direction}";
         }
+
+        public override bool Equals(object obj)
+        {
+            return obj is OrderClause clause && Field == clause.Field && Direction == clause.Direction;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = -652798679;
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Field);
+            hashCode = hashCode * -1521134295 + Direction.GetHashCode();
+            return hashCode;
+        }
     }
 }

@@ -55,9 +55,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DataView\DuncanApps.DataView.csproj">
+    <ProjectReference Include="..\DataView\DataView.csproj">
       <Project>{e34f56fa-406e-434f-86a3-f292bb369072}</Project>
-      <Name>DuncanApps.DataView</Name>
+      <Name>DataView</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

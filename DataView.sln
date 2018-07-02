@@ -5,7 +5,11 @@ VisualStudioVersion = 15.0.27428.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QueryTests", "QueryTests\QueryTests.csproj", "{61914B26-3BB0-40E6-8ABE-AB00A6EFB804}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DuncanApps.DataView", "DataView\DuncanApps.DataView.csproj", "{E34F56FA-406E-434F-86A3-F292BB369072}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataView", "DataView\DataView.csproj", "{E34F56FA-406E-434F-86A3-F292BB369072}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataView.Mvc", "DataView.Mvc\DataView.Mvc.csproj", "{44FEFE52-0ECA-4C1D-9E4E-7D235F980185}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataView.Mvc.Text", "DataView.Mvc.Text\DataView.Mvc.Text.csproj", "{D170FA65-4B41-4298-B78E-8DD20EDB8025}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{E34F56FA-406E-434F-86A3-F292BB369072}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E34F56FA-406E-434F-86A3-F292BB369072}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E34F56FA-406E-434F-86A3-F292BB369072}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44FEFE52-0ECA-4C1D-9E4E-7D235F980185}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44FEFE52-0ECA-4C1D-9E4E-7D235F980185}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44FEFE52-0ECA-4C1D-9E4E-7D235F980185}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44FEFE52-0ECA-4C1D-9E4E-7D235F980185}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D170FA65-4B41-4298-B78E-8DD20EDB8025}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D170FA65-4B41-4298-B78E-8DD20EDB8025}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D170FA65-4B41-4298-B78E-8DD20EDB8025}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D170FA65-4B41-4298-B78E-8DD20EDB8025}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

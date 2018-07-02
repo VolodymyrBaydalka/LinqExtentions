@@ -52,3 +52,4 @@ packages
 bin/
 obj/
 /.vs
+*.pfx

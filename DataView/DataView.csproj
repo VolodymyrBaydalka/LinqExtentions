@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net45;net46</TargetFrameworks>
-    <Version>0.1.4</Version>
-    <AssemblyVersion>0.0.1.4</AssemblyVersion>
-    <FileVersion>0.0.1.4</FileVersion>
+    <Version>0.1.6</Version>
+    <AssemblyVersion>0.0.1.6</AssemblyVersion>
+    <FileVersion>0.0.1.6</FileVersion>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Copyright>Copyright © Volodymyr Baydalka 2018</Copyright>
@@ -14,6 +14,8 @@
     <Description>Utility paging library</Description>
     <Authors>Volodymyr Baydalka</Authors>
     <PackageTags></PackageTags>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>key.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>
