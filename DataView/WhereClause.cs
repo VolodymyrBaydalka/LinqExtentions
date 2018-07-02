@@ -32,16 +32,16 @@ namespace DuncanApps.DataView
 
         public override bool Equals(object obj)
         {
-            return obj is WhereClause clause && Field == clause.Field && Operator == clause.Operator 
-                && EqualityComparer<object>.Default.Equals(Value, clause.Value);
+            return obj is WhereClause clause && Field == clause.Field 
+                && Operator == clause.Operator && object.Equals(Value, clause.Value);
         }
 
         public override int GetHashCode()
         {
             var hashCode = -1117517818;
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Field);
+            hashCode = hashCode * -1521134295 + (Field == null ? 0 : Field.GetHashCode());
             hashCode = hashCode * -1521134295 + Operator.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<object>.Default.GetHashCode(Value);
+            hashCode = hashCode * -1521134295 + (Value == null ? 0 : Value.GetHashCode());
             return hashCode;
         }
     }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace DuncanApps.DataView.Mvc
 {
@@ -21,10 +22,37 @@ namespace DuncanApps.DataView.Mvc
             { "asc", ListSortDirection.Ascending },
             { "desc", ListSortDirection.Descending }
         };
+        private static Regex WhereClauseRegex = new Regex(@"((?<field>[^\s]+)\s+(?<op>[^\s]+)\s+(?<val>[^\s]+))(\s+(?<logic>and|or)\s+)?");
 
         public static IWhereClause PasreWhereClause(string text)
         {
             IWhereClause result = null;
+
+            var matches = WhereClauseRegex.Matches(text);
+            var logicText = "";
+
+            for (var i = 0; i < matches.Count; i++)
+            {
+                var match = matches[i];
+                var logicMatch = match.Groups["logic"];
+                var fieldMatch = match.Groups["field"];
+                var opMatch = match.Groups["op"];
+                var valueMatch = match.Groups["val"];
+
+                var where = new WhereClause
+                {
+                    Field = fieldMatch.Value,
+                    Operator = ParseWhereOperator(opMatch.Value),
+                    Value = valueMatch.Value
+                };
+
+                if (result == null)
+                    result = where;
+                else if(!string.IsNullOrEmpty(logicText))
+                    result = result.Combine(ParseWhereLogic(logicText), where);
+
+                logicText = logicMatch.Success ? logicMatch.Value : null;
+            }
 
             return result;
         }
@@ -62,6 +90,11 @@ namespace DuncanApps.DataView.Mvc
                 return val;
 
             return (ListSortDirection)Enum.Parse(typeof(ListSortDirection), text, true);
+        }
+
+        public static WhereLogic ParseWhereLogic(string text)
+        {
+            return (WhereLogic)Enum.Parse(typeof(WhereLogic), text, true);
         }
     }
 }

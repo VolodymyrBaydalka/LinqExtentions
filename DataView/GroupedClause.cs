@@ -30,15 +30,14 @@ namespace DuncanApps.DataView
 
         public override bool Equals(object obj)
         {
-            return obj is GroupedClause clause && Logic == clause.Logic &&
-                   EqualityComparer<IList<IWhereClause>>.Default.Equals(SubClauses, clause.SubClauses);
+            return obj is GroupedClause clause && Logic == clause.Logic && Enumerable.SequenceEqual(SubClauses, clause.SubClauses);
         }
 
         public override int GetHashCode()
         {
             var hashCode = -1955899414;
             hashCode = hashCode * -1521134295 + Logic.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<IList<IWhereClause>>.Default.GetHashCode(SubClauses);
+            hashCode = hashCode * -1521134295 + (SubClauses == null ? 0 : SubClauses.GetHashCode());
             return hashCode;
         }
     }

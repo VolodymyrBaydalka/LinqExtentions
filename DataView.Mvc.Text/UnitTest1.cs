@@ -10,6 +10,13 @@ namespace DataView.Mvc.Text
     public class UnitTest1
     {
         [TestMethod]
+        public void TestParseWhereLogic()
+        {
+            Assert.AreEqual(ParseHelper.ParseWhereLogic("and"), WhereLogic.And);
+            Assert.AreEqual(ParseHelper.ParseWhereLogic("or"), WhereLogic.Or);
+        }
+
+        [TestMethod]
         public void TestParseListSortDirection()
         {
             Assert.AreEqual(ParseHelper.ParseListSortDirection("asc"), ListSortDirection.Ascending);
@@ -46,6 +53,29 @@ namespace DataView.Mvc.Text
             Assert.AreEqual(order3[0], new OrderClause { Field = "field1", Direction = ListSortDirection.Ascending });
             Assert.AreEqual(order3[1], new OrderClause { Field = "field2", Direction = ListSortDirection.Descending });
             Assert.AreEqual(order3[2], new OrderClause { Field = "field3", Direction = ListSortDirection.Ascending });
+        }
+
+        [TestMethod]
+        public void TestParseWhereClause()
+        {
+            var where1 = ParseHelper.PasreWhereClause("field1 eq 10");
+
+            Assert.AreEqual(where1, new WhereClause { Field = "field1", Operator = WhereOperator.IsEqualTo, Value = "10" });
+
+            var where2 = ParseHelper.PasreWhereClause("field1 eq 10 and field2 neq 20");
+
+            Assert.AreEqual(where2,
+                new WhereClause { Field = "field1", Operator = WhereOperator.IsEqualTo, Value = "10" }
+                    .And(new WhereClause { Field = "field2", Operator = WhereOperator.IsNotEqualTo, Value = "20" })
+            );
+
+            var where3 = ParseHelper.PasreWhereClause("field1 eq 10 and field2 neq 20 or field3 lt 5");
+
+            Assert.AreEqual(where3,
+                new WhereClause { Field = "field1", Operator = WhereOperator.IsEqualTo, Value = "10" }
+                    .And(new WhereClause { Field = "field2", Operator = WhereOperator.IsNotEqualTo, Value = "20" })
+                    .Or(new WhereClause { Field = "field3", Operator = WhereOperator.IsLessThan, Value = "5" })
+            );
         }
     }
 }

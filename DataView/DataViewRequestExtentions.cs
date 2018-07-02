@@ -42,7 +42,7 @@ namespace DuncanApps.DataView
             return @this;
         }
 
-        internal static GroupedClause GroupClause(this IWhereClause left, WhereLogic logic, IWhereClause right)
+        public static GroupedClause Combine(this IWhereClause left, WhereLogic logic, IWhereClause right)
         {
             if (!(left is GroupedClause grouped) || grouped.Logic != logic)
             {
@@ -56,22 +56,22 @@ namespace DuncanApps.DataView
 
         public static GroupedClause Or(this IWhereClause left, IWhereClause right)
         {
-            return GroupClause(left, WhereLogic.Or, right);
+            return Combine(left, WhereLogic.Or, right);
         }
 
         public static GroupedClause And(this IWhereClause left, IWhereClause right)
         {
-            return GroupClause(left, WhereLogic.And, right);
+            return Combine(left, WhereLogic.And, right);
         }
 
         public static GroupedClause Or(this IWhereClause left, string field, WhereOperator op, object value)
         {
-            return GroupClause(left, WhereLogic.Or, new WhereClause(field, op, value));
+            return Combine(left, WhereLogic.Or, new WhereClause(field, op, value));
         }
 
         public static GroupedClause And(this IWhereClause left, string field, WhereOperator op, object value)
         {
-            return GroupClause(left, WhereLogic.And, new WhereClause(field, op, value));
+            return Combine(left, WhereLogic.And, new WhereClause(field, op, value));
         }
         #endregion
 
