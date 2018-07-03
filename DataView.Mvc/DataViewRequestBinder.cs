@@ -15,10 +15,10 @@ namespace DuncanApps.DataView.Mvc
             var result = new DataViewRequest();
 
             var values = bindingContext.ValueProvider;
-            var orderText = values.GetValue("orderby")?.AttemptedValue;
-            var whereText = values.GetValue("where")?.AttemptedValue;
-            var skipText = values.GetValue("skip")?.AttemptedValue;
-            var takeText = values.GetValue("take")?.AttemptedValue;
+            var orderText = values.GetValue($"{Prefix}orderby")?.AttemptedValue;
+            var whereText = values.GetValue($"{Prefix}where")?.AttemptedValue;
+            var skipText = values.GetValue($"{Prefix}skip")?.AttemptedValue;
+            var takeText = values.GetValue($"{Prefix}take")?.AttemptedValue;
 
             result.Skip = skipText == null ? 0 : Convert.ToInt32(skipText);
             result.Take = takeText == null ? 0 : Convert.ToInt32(takeText);
