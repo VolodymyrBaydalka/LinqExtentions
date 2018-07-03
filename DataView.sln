@@ -11,6 +11,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataView.Mvc", "DataView.Mv
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataView.Mvc.Test", "DataView.Mvc.Text\DataView.Mvc.Test.csproj", "{D170FA65-4B41-4298-B78E-8DD20EDB8025}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataView.MvcCore", "DataView.MvcCore\DataView.MvcCore.csproj", "{453678D3-76C3-4B5A-90C2-5D56828F0F87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataView.MvcDemoCore", "DataView.MvcDemoCore\DataView.MvcDemoCore.csproj", "{775755DF-A65F-416E-B4C8-F657EC9EC09F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{D170FA65-4B41-4298-B78E-8DD20EDB8025}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D170FA65-4B41-4298-B78E-8DD20EDB8025}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D170FA65-4B41-4298-B78E-8DD20EDB8025}.Release|Any CPU.Build.0 = Release|Any CPU
+		{453678D3-76C3-4B5A-90C2-5D56828F0F87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{453678D3-76C3-4B5A-90C2-5D56828F0F87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{453678D3-76C3-4B5A-90C2-5D56828F0F87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{453678D3-76C3-4B5A-90C2-5D56828F0F87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{775755DF-A65F-416E-B4C8-F657EC9EC09F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{775755DF-A65F-416E-B4C8-F657EC9EC09F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{775755DF-A65F-416E-B4C8-F657EC9EC09F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{775755DF-A65F-416E-B4C8-F657EC9EC09F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

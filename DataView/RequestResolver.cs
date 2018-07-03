@@ -15,6 +15,8 @@ namespace DuncanApps.DataView
 
         #region Properties
         public static RequestResolver Default { get; set; } = new RequestResolver();
+
+        public string ItemKeyword { get; set; } = "@item";
         #endregion
 
         #region Implementation
@@ -47,7 +49,10 @@ namespace DuncanApps.DataView
 
             if (orderBy.Count == 0)
             {
-                orderBy.Add(DefaultOrderClause(q.ElementType));
+                var clause = DefaultOrderClause(q.ElementType);
+
+                if (clause != null)
+                    orderBy.Add(clause);
             }
 
             q = ResolveOrderBy(q, orderBy);
@@ -64,6 +69,9 @@ namespace DuncanApps.DataView
         protected virtual OrderClause DefaultOrderClause(Type type)
         {
             string propertyName = null;
+
+            if (IsSimpleType(type))
+                return null;
 
             foreach (var prop in type.GetProperties())
             {
@@ -90,8 +98,12 @@ namespace DuncanApps.DataView
                     ? (ordered ? nameof(Queryable.ThenBy) : nameof(Queryable.OrderBy))
                     : (ordered ? nameof(Queryable.ThenByDescending) : nameof(Queryable.OrderByDescending));
 
-                var lambda = Expression.Lambda(Expression.PropertyOrField(param, clause.Field), param);
-                q = q.Provider.CreateQuery(Expression.Call(typeof(Queryable), methodName, new[] { q.ElementType, lambda.Body.Type }, q.Expression, Expression.Quote(lambda)));
+
+                var lambda = clause.Field == ItemKeyword ? Expression.Lambda(param, param)
+                        : Expression.Lambda(Expression.PropertyOrField(param, clause.Field), param);
+
+                q = q.Provider.CreateQuery(Expression.Call(typeof(Queryable), methodName, 
+                    new[] { q.ElementType, lambda.Body.Type }, q.Expression, Expression.Quote(lambda)));
 
                 ordered = true;
             }
@@ -118,7 +130,7 @@ namespace DuncanApps.DataView
             if (expr == null)
                 return q;
 
-            return q.Provider.CreateQuery(Expression.Call(typeof(Queryable), nameof(Queryable.Where), 
+            return q.Provider.CreateQuery(Expression.Call(typeof(Queryable), nameof(Queryable.Where),
                 new[] { q.ElementType }, q.Expression, Expression.Lambda(expr, param)));
         }
 
@@ -151,13 +163,13 @@ namespace DuncanApps.DataView
 
         protected virtual Expression BuildExpression(ParameterExpression param, WhereClause where)
         {
-            var left = Expression.PropertyOrField(param, where.Field);
+            var left = where.Field == ItemKeyword ? param : (Expression)Expression.PropertyOrField(param, where.Field);
             var right = Expression.Constant(GetValue(left, where), left.Type);
 
             return where.Operator.BuildExpression(left, right);
         }
 
-        protected virtual object GetValue(MemberExpression left, WhereClause where)
+        protected virtual object GetValue(Expression left, WhereClause where)
         {
             if (_converters.TryGetValue(left.Type, out var convert))
                 return convert(where.Value);
@@ -174,6 +186,11 @@ namespace DuncanApps.DataView
             };
 
             return swaper.Visit(expr.Body);
+        }
+
+        private static bool IsSimpleType(Type type)
+        {
+            return type.IsPrimitive || type.IsEnum || type == typeof(string);
         }
         #endregion
     }
