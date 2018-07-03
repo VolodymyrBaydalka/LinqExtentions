@@ -16,6 +16,8 @@
     <PackageTags></PackageTags>
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>key.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyName>DuncanApps.DataView</AssemblyName>
+    <RootNamespace>DuncanApps.DataView</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

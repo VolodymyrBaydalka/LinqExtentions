@@ -22,7 +22,12 @@ namespace DuncanApps.DataView.Mvc
             { "asc", ListSortDirection.Ascending },
             { "desc", ListSortDirection.Descending }
         };
-        private static Regex WhereClauseRegex = new Regex(@"((?<field>[^\s]+)\s+(?<op>[^\s]+)\s+(?<val>[^\s]+))(\s+(?<logic>and|or)\s+)?");
+        private static readonly Regex WhereClauseRegex;
+
+        static ParseHelper()
+        {
+            WhereClauseRegex = new Regex(@"(\((?<group>(?>\((?<depth>)|\)(?<-depth>)|[^()]+)*\)(?(depth)(?!)))|((?<field>[^\s]+)\s+(?<op>[^\s]+)\s+(?<val>[^\s]+)))(\s+(?<logic>and|or)\s+)?");
+        }
 
         public static IWhereClause PasreWhereClause(string text)
         {
@@ -35,23 +40,23 @@ namespace DuncanApps.DataView.Mvc
             {
                 var match = matches[i];
                 var logicMatch = match.Groups["logic"];
-                var fieldMatch = match.Groups["field"];
-                var opMatch = match.Groups["op"];
-                var valueMatch = match.Groups["val"];
+                var groupMatch = match.Groups["group"];
 
-                var where = new WhereClause
-                {
-                    Field = fieldMatch.Value,
-                    Operator = ParseWhereOperator(opMatch.Value),
-                    Value = valueMatch.Value
-                };
+                var where = groupMatch.Success
+                    ? PasreWhereClause(groupMatch.Value)
+                    : new WhereClause
+                    {
+                        Field = match.Groups["field"].Value,
+                        Operator = ParseWhereOperator(match.Groups["op"].Value),
+                        Value = match.Groups["val"].Value
+                    };
 
                 if (result == null)
                     result = where;
-                else if(!string.IsNullOrEmpty(logicText))
+                else
                     result = result.Combine(ParseWhereLogic(logicText), where);
 
-                logicText = logicMatch.Success ? logicMatch.Value : null;
+                logicText = logicMatch.Value;
             }
 
             return result;

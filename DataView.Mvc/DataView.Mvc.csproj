@@ -1,18 +1,28 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>net45;net46</TargetFrameworks>
+    <Version>0.1.6</Version>
+    <AssemblyVersion>0.0.1.6</AssemblyVersion>
+    <FileVersion>0.0.1.6</FileVersion>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Copyright>Copyright © Volodymyr Baydalka 2018</Copyright>
+    <PackageLicenseUrl>https://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/zVolodymyr/LinqExtentions</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/zVolodymyr/LinqExtentions</RepositoryUrl>
+    <Description>MCV binding library for DataViewRequest</Description>
+    <Authors>Volodymyr Baydalka</Authors>
+    <PackageTags></PackageTags>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>key.pfx</AssemblyOriginatorKeyFile>
     <AssemblyName>DuncanApps.DataView.Mvc</AssemblyName>
     <RootNamespace>DuncanApps.DataView.Mvc</RootNamespace>
-    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.6" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\DataView\DataView.csproj" />
+    <PackageReference Include="DuncanApps.DataView" Version="0.1.6" />
   </ItemGroup>
 
 </Project>

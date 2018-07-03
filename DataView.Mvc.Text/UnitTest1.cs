@@ -76,6 +76,22 @@ namespace DataView.Mvc.Text
                     .And(new WhereClause { Field = "field2", Operator = WhereOperator.IsNotEqualTo, Value = "20" })
                     .Or(new WhereClause { Field = "field3", Operator = WhereOperator.IsLessThan, Value = "5" })
             );
+
+            var where4 = ParseHelper.PasreWhereClause("(field1 eq 10 and field2 neq 20) or field3 lt 5");
+
+            Assert.AreEqual(where3,
+                new WhereClause { Field = "field1", Operator = WhereOperator.IsEqualTo, Value = "10" }
+                    .And(new WhereClause { Field = "field2", Operator = WhereOperator.IsNotEqualTo, Value = "20" })
+                    .Or(new WhereClause { Field = "field3", Operator = WhereOperator.IsLessThan, Value = "5" })
+            );
+
+            var where5 = ParseHelper.PasreWhereClause("(field1 eq 10 and (field2 neq 20)) or field3 lt 5");
+
+            Assert.AreEqual(where3,
+                new WhereClause { Field = "field1", Operator = WhereOperator.IsEqualTo, Value = "10" }
+                    .And(new WhereClause { Field = "field2", Operator = WhereOperator.IsNotEqualTo, Value = "20" })
+                    .Or(new WhereClause { Field = "field3", Operator = WhereOperator.IsLessThan, Value = "5" })
+            );
         }
     }
 }
