@@ -16,7 +16,7 @@
     }
     
     /// js
-    $.get("/getItems?take=20&skip=3&orderby[0].field=name").then(data => {
+    $.get("/getItems?$take=20&$skip=3&$orderby=name asc").then(data => {
       $("#total").text(data.total);
       
       renderItems(data.items);
