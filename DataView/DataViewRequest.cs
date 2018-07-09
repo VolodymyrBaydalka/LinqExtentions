@@ -1,8 +1,6 @@
-﻿using System;
+﻿using DuncanApps.DataView.Converters;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace DuncanApps.DataView
 {
@@ -10,7 +8,9 @@ namespace DuncanApps.DataView
     {
         public int Skip { get; set; }
         public int Take { get; set; }
+
         public IWhereClause Where { get; set; }
+        [TypeConverter(typeof(OrderClausesConverter))]
         public IList<OrderClause> OrderBy { get; set; }
     }
 }

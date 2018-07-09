@@ -14,9 +14,21 @@ namespace DuncanApps.DataView
         #endregion
 
         #region Properties
+        /// <summary>
+        /// Default data view request resolver
+        /// </summary>
         public static RequestResolver Default { get; set; } = new RequestResolver();
 
+        /// <summary>
+        /// IIndicates keyword to sorting or filtering by item itself.
+        /// </summary>
         public string ItemKeyword { get; set; } = "@item";
+
+        /// <summary>
+        /// Indicates whether default sorting will be applied (by first property of simple type by default).
+        /// Entity framework requires ordered queryable to apply Skip or Take methods
+        /// </summary>
+        public bool ApplyDefaultOrdering { get; set; } = true;
         #endregion
 
         #region Implementation
@@ -47,7 +59,7 @@ namespace DuncanApps.DataView
 
             var orderBy = request.OrderBy ?? new List<OrderClause>(1);
 
-            if (orderBy.Count == 0)
+            if (orderBy.Count == 0 && ApplyDefaultOrdering)
             {
                 var clause = DefaultOrderClause(q.ElementType);
 
@@ -79,9 +91,7 @@ namespace DuncanApps.DataView
                     continue;
 
                 if (propertyName == null || prop.IsDefined(typeof(KeyAttribute), false))
-                {
                     propertyName = prop.Name;
-                }
             }
 
             return new OrderClause { Field = propertyName };

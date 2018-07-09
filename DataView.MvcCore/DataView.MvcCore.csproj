@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <AssemblyName>DuncanApps.DataView.MvcCore</AssemblyName>
+    <RootNamespace>DuncanApps.DataView.MvcCore</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using DuncanApps.DataView.Converters;
 using System.ComponentModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DuncanApps.DataView
 {
+    [TypeConverter(typeof(WhereClauseConverter))]
     public interface IWhereClause
     {
     }

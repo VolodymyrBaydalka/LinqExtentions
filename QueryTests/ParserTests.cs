@@ -1,13 +1,13 @@
 ﻿using System;
 using System.ComponentModel;
 using DuncanApps.DataView;
-using DuncanApps.DataView.Mvc;
+using DuncanApps.DataView.Converters;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace DataView.Mvc.Text
+namespace DuncanApps.DataView.Tests
 {
     [TestClass]
-    public class UnitTest1
+    public class ParserTests
     {
         [TestMethod]
         public void TestParseWhereLogic()
@@ -79,7 +79,7 @@ namespace DataView.Mvc.Text
 
             var where4 = ParseHelper.PasreWhereClause("(field1 eq 10 and field2 neq 20) or field3 lt 5");
 
-            Assert.AreEqual(where3,
+            Assert.AreEqual(where4,
                 new WhereClause { Field = "field1", Operator = WhereOperator.IsEqualTo, Value = "10" }
                     .And(new WhereClause { Field = "field2", Operator = WhereOperator.IsNotEqualTo, Value = "20" })
                     .Or(new WhereClause { Field = "field3", Operator = WhereOperator.IsLessThan, Value = "5" })
@@ -87,10 +87,17 @@ namespace DataView.Mvc.Text
 
             var where5 = ParseHelper.PasreWhereClause("(field1 eq 10 and (field2 neq 20)) or field3 lt 5");
 
-            Assert.AreEqual(where3,
+            Assert.AreEqual(where5,
                 new WhereClause { Field = "field1", Operator = WhereOperator.IsEqualTo, Value = "10" }
                     .And(new WhereClause { Field = "field2", Operator = WhereOperator.IsNotEqualTo, Value = "20" })
                     .Or(new WhereClause { Field = "field3", Operator = WhereOperator.IsLessThan, Value = "5" })
+            );
+
+            var where6 = ParseHelper.PasreWhereClause("(@item ne red)and(@item ne yellow)");
+
+            Assert.AreEqual(where6,
+                new WhereClause { Field = "@item", Operator = WhereOperator.IsNotEqualTo, Value = "red" }
+                    .And(new WhereClause { Field = "@item", Operator = WhereOperator.IsNotEqualTo, Value = "yellow" })
             );
         }
     }

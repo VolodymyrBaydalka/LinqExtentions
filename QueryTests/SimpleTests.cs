@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Linq;
-using DuncanApps.DataView;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq.Expressions;
-using DuncanApps.DataView;
+using System.ComponentModel.DataAnnotations;
 
-namespace QueryTests
+namespace DuncanApps.DataView.Tests
 {
     [TestClass]
-    public class UnitTest1
+    public class SimpleTests
     {
         class Item {
+            [Key]
             public int Id { get; set; }
             public string Name { get; set; }
             public DateTime Date { get; set; }

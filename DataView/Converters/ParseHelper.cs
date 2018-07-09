@@ -4,17 +4,20 @@ using System.ComponentModel;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace DuncanApps.DataView.Mvc
+namespace DuncanApps.DataView.Converters
 {
     public static class ParseHelper
     {
         private static Dictionary<string, WhereOperator> operatorShortNames = new Dictionary<string, WhereOperator>(StringComparer.OrdinalIgnoreCase)
         {
             { "eq", WhereOperator.IsEqualTo },
+            { "ne", WhereOperator.IsNotEqualTo },
             { "neq", WhereOperator.IsNotEqualTo },
             { "lt", WhereOperator.IsLessThan },
+            { "le", WhereOperator.IsLessThanOrEqualTo},
             { "lte", WhereOperator.IsLessThanOrEqualTo},
             { "gt", WhereOperator.IsGreaterThan },
+            { "ge", WhereOperator.IsGreaterThanOrEqualTo },
             { "gte", WhereOperator.IsGreaterThanOrEqualTo },
         };
         private static Dictionary<string, ListSortDirection> directionShortNames = new Dictionary<string, ListSortDirection>(StringComparer.OrdinalIgnoreCase)
@@ -26,7 +29,7 @@ namespace DuncanApps.DataView.Mvc
 
         static ParseHelper()
         {
-            WhereClauseRegex = new Regex(@"(\((?<group>(?>\((?<depth>)|\)(?<-depth>)|[^()]+)*\)(?(depth)(?!)))|((?<field>[^\s]+)\s+(?<op>[^\s]+)\s+(?<val>[^\s]+)))(\s+(?<logic>and|or)\s+)?");
+            WhereClauseRegex = new Regex(@"((?<group>\((?>\((?<depth>)|\)(?<-depth>)|[^()]+)*\)(?(depth)(?!)))|((?<field>[^\s]+)\s+(?<op>[^\s]+)\s+(?<val>[^\s]+)))(\s*(?<logic>and|or)\s*)?");
         }
 
         public static IWhereClause PasreWhereClause(string text)
@@ -43,7 +46,7 @@ namespace DuncanApps.DataView.Mvc
                 var groupMatch = match.Groups["group"];
 
                 var where = groupMatch.Success
-                    ? PasreWhereClause(groupMatch.Value)
+                    ? PasreWhereClause(groupMatch.Value.Substring(1, groupMatch.Length - 2))
                     : new WhereClause
                     {
                         Field = match.Groups["field"].Value,

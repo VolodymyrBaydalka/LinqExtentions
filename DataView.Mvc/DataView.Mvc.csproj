@@ -21,8 +21,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.6" />
+    <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.0.0" />
     <PackageReference Include="DuncanApps.DataView" Version="0.1.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DataView\DataView.csproj" />
   </ItemGroup>
 
 </Project>

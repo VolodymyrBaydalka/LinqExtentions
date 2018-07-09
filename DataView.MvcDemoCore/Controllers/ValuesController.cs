@@ -15,8 +15,12 @@ namespace DataView.MvcDemoCore.Controllers
         string[] colors = new[] {"red", "pink", "purple", "deep-purple", "indigo", "blue", "light-blue", "cyan", "teal", "green", "light-green", "lime", "yellow", "amber", "orange", "deep-orange", "brown", "grey", "blue-grey"};
         // GET api/values
         [HttpGet]
-        public DataView<string> Get([ModelBinder(binderType:typeof(DataViewRequestBinder))] DataViewRequest request)
+        public DataView<string> Get(DataViewRequest request)
         {
+
+            if (!this.ModelState.IsValid)
+                throw null;
+
             return colors.AsQueryable().ToDataView(request);
         }
     }
