@@ -37,7 +37,7 @@ namespace DuncanApps.DataView.Converters
 
         public static IList<OrderClause> PasreOrderClause(string text)
         {
-            var parts = text.Split(',');
+            var parts = text.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             var result = new List<OrderClause>();
 
             foreach (var part in parts)

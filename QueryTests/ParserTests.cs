@@ -37,6 +37,9 @@ namespace DuncanApps.DataView.Tests
         [TestMethod]
         public void TestParseOrderClause()
         {
+            var empty = ParseHelper.PasreOrderClause(string.Empty);
+            Assert.AreEqual(empty.Count, 0);
+
             var order1 = ParseHelper.PasreOrderClause("field1");
 
             Assert.AreEqual(order1.Count, 1);
@@ -58,6 +61,9 @@ namespace DuncanApps.DataView.Tests
         [TestMethod]
         public void TestParseWhereClause()
         {
+            var empty = ParseHelper.PasreWhereClause(string.Empty);
+            Assert.AreEqual(empty, null);
+
             var where1 = ParseHelper.PasreWhereClause("field1 eq 10");
 
             Assert.AreEqual(where1, new WhereClause { Field = "field1", Operator = WhereOperator.IsEqualTo, Value = "10" });
