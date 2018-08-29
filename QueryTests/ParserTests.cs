@@ -99,6 +99,13 @@ namespace DuncanApps.DataView.Tests
                 new WhereClause { Field = "@item", Operator = WhereOperator.IsNotEqualTo, Value = "red" }
                     .And(new WhereClause { Field = "@item", Operator = WhereOperator.IsNotEqualTo, Value = "yellow" })
             );
+
+            var where7 = ParseHelper.PasreWhereClause("field1 eq \"test \\\\\\\"value\"");
+            Assert.AreEqual(where7, new WhereClause { Field = "field1", Operator = WhereOperator.IsEqualTo, Value = "test \\\"value" });
+
+
+            var where8 = ParseHelper.PasreWhereClause(" _field1 eq \"test \\\"value\" ");
+            Assert.AreEqual(where8, new WhereClause { Field = "_field1", Operator = WhereOperator.IsEqualTo, Value = "test \"value" });
         }
     }
 }

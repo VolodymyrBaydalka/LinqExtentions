@@ -25,44 +25,14 @@ namespace DuncanApps.DataView.Converters
             { "asc", ListSortDirection.Ascending },
             { "desc", ListSortDirection.Descending }
         };
-        private static readonly Regex WhereClauseRegex;
 
         static ParseHelper()
         {
-            WhereClauseRegex = new Regex(@"((?<group>\((?>\((?<depth>)|\)(?<-depth>)|[^()]+)*\)(?(depth)(?!)))|((?<field>[^\s]+)\s+(?<op>[^\s]+)\s+(?<val>[^\s]+)))(\s*(?<logic>and|or)\s*)?");
         }
 
         public static IWhereClause PasreWhereClause(string text)
         {
-            IWhereClause result = null;
-
-            var matches = WhereClauseRegex.Matches(text);
-            var logicText = "";
-
-            for (var i = 0; i < matches.Count; i++)
-            {
-                var match = matches[i];
-                var logicMatch = match.Groups["logic"];
-                var groupMatch = match.Groups["group"];
-
-                var where = groupMatch.Success
-                    ? PasreWhereClause(groupMatch.Value.Substring(1, groupMatch.Length - 2))
-                    : new WhereClause
-                    {
-                        Field = match.Groups["field"].Value,
-                        Operator = ParseWhereOperator(match.Groups["op"].Value),
-                        Value = match.Groups["val"].Value
-                    };
-
-                if (result == null)
-                    result = where;
-                else
-                    result = result.Combine(ParseWhereLogic(logicText), where);
-
-                logicText = logicMatch.Value;
-            }
-
-            return result;
+            return new FilterParser(text).Parse();
         }
 
         public static IList<OrderClause> PasreOrderClause(string text)

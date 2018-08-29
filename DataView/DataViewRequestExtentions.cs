@@ -73,6 +73,17 @@ namespace DuncanApps.DataView
         {
             return Combine(left, WhereLogic.And, new WhereClause(field, op, value));
         }
+
+        public static IWhereClause Reduce(this IWhereClause clause)
+        {
+            if (clause is GroupedClause grouped)
+                if (grouped.SubClauses == null)
+                    return null;
+                else if (grouped.SubClauses.Count == 1)
+                    return grouped.SubClauses[0].Reduce();
+
+            return clause;
+        }
         #endregion
 
         public static DataView<T> ToDataView<T>(this IQueryable<T> @this, DataViewRequest request, RequestResolver resolver = null)
