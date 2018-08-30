@@ -116,9 +116,9 @@ namespace DuncanApps.DataView.Tests
             var where8 = ParseHelper.PasreWhereClause(" _field1 eq \"test \\\"value\" ");
             Assert.AreEqual(where8, new WhereClause { Field = "_field1", Operator = WhereOperator.IsEqualTo, Value = "test \"value" });
 
-            var where9 = ParseHelper.PasreWhereClause("field1 eq 10.88326");
+            var where9 = ParseHelper.PasreWhereClause("field1 eq -10.88326");
 
-            Assert.AreEqual(where9, new WhereClause { Field = "field1", Operator = WhereOperator.IsEqualTo, Value = "10.88326" });
+            Assert.AreEqual(where9, new WhereClause { Field = "field1", Operator = WhereOperator.IsEqualTo, Value = "-10.88326" });
 
         }
     }

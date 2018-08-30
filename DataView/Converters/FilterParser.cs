@@ -109,7 +109,7 @@ namespace DuncanApps.DataView.Converters
             }
             else if (c == '\"')
                 return new KeyValuePair<TokenType, string>(TokenType.String, ReadString());
-            else if (char.IsDigit(c))
+            else if (IsNumberChar(c))
                 return new KeyValuePair<TokenType, string>(TokenType.Number, ReadWhile(IsNumberChar));
 
             return new KeyValuePair<TokenType, string>(TokenType.Word, ReadWhile(IsWordChar));
@@ -139,7 +139,7 @@ namespace DuncanApps.DataView.Converters
 
         private static bool IsNumberChar(char c)
         {
-            return char.IsDigit(c) || c == '.';
+            return char.IsDigit(c) || c == '.' || c == '-';
         }
 
         private static bool IsWordChar(char c)
