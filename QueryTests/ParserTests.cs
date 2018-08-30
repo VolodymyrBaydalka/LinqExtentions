@@ -61,6 +61,9 @@ namespace DuncanApps.DataView.Tests
         [TestMethod]
         public void TestParseWhereClause()
         {
+            var nullClause = ParseHelper.PasreWhereClause(null);
+            Assert.AreEqual(nullClause, null);
+
             var empty = ParseHelper.PasreWhereClause(string.Empty);
             Assert.AreEqual(empty, null);
 

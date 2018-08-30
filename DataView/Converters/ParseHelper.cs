@@ -32,6 +32,9 @@ namespace DuncanApps.DataView.Converters
 
         public static IWhereClause PasreWhereClause(string text)
         {
+            if(string.IsNullOrEmpty(text))
+                return null;
+
             return new FilterParser(text).Parse();
         }
 
