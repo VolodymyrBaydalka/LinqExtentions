@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -29,6 +30,11 @@ namespace DuncanApps.DataView
         /// Entity framework requires ordered queryable to apply Skip or Take methods
         /// </summary>
         public bool ApplyDefaultOrdering { get; set; } = true;
+
+        /// <summary>
+        /// Indicates whether resolver should detect collections and aplly filters to collection items.
+        /// </summary>
+        public bool HandleCollection { get; set; } = true;
         #endregion
 
         #region Implementation
@@ -174,8 +180,18 @@ namespace DuncanApps.DataView
         protected virtual Expression BuildExpression(ParameterExpression param, WhereClause where)
         {
             var left = where.Field == ItemKeyword ? param : (Expression)Expression.PropertyOrField(param, where.Field);
-            var right = Expression.Constant(GetValue(left, where), left.Type);
+            var itemType = HandleCollection ? GetCollectionItemType(left.Type) : null;
 
+            if (itemType != null)
+            {
+                var itemLeft = Expression.Parameter(itemType, "y");
+                var itemRight = Expression.Constant(GetValue(itemLeft, where), itemType);
+                var itemLambda = Expression.Lambda(where.Operator.BuildExpression(itemLeft, itemRight), itemLeft);
+
+                return Expression.Call(typeof(Enumerable), "Any", new[] { itemType }, left, itemLambda);
+            }
+
+            var right = Expression.Constant(GetValue(left, where), left.Type);
             return where.Operator.BuildExpression(left, right);
         }
 
@@ -201,6 +217,17 @@ namespace DuncanApps.DataView
         private static bool IsSimpleType(Type type)
         {
             return type.IsPrimitive || type.IsEnum || type == typeof(string);
+        }
+
+        private static Type GetCollectionItemType(Type type)
+        {
+            if (type.IsArray)
+                return type.GetElementType();
+
+            if(typeof(ICollection).IsAssignableFrom(type) && type.IsGenericType)
+                return type.GetGenericArguments().Single();
+
+            return null;
         }
         #endregion
     }

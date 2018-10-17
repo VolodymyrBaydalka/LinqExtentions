@@ -17,6 +17,13 @@ namespace DuncanApps.DataView.Tests
             public decimal Price { get; set; }
         }
 
+        class CollectionItem
+        {
+            [Key]
+            public int Id { get; set; }
+            public string[] Tags { get; set; }
+        }
+
         Item[] testData = new Item[] {
                 new Item { Id = 1, Name ="Item 1", Date = new DateTime(2016, 1, 13), Price = 100 },
                 new Item { Id = 2, Name ="Item 2", Date = new DateTime(2016, 1, 13), Price = 200 },
@@ -150,6 +157,28 @@ namespace DuncanApps.DataView.Tests
             Assert.AreEqual(subset.Items.Count, 2);
             Assert.AreEqual(subset.Items[0].Id, 3);
             Assert.AreEqual(subset.Items[1].Id, 4);
+        }
+
+        [TestMethod]
+        public void CollectionTest()
+        {
+
+            var collectionData = new[] {
+                new CollectionItem { Id = 1, Tags = new []{ "a", "b", "c" } },
+                new CollectionItem { Id = 2, Tags = new []{ "a", "b", "c", "d" } }
+            };
+
+            var request = new DataViewRequest
+            {
+                Where = new WhereClause(nameof(CollectionItem.Tags), WhereOperator.IsEqualTo, "d"),
+            };
+
+            var subset = collectionData.AsQueryable().ToDataView(request);
+
+            Assert.AreEqual(subset.Total, 1);
+            Assert.AreEqual(subset.Skipped, 0);
+            Assert.AreEqual(subset.Taken, 0);
+            Assert.AreEqual(subset.Items[0].Id, 2);
         }
     }
 }
