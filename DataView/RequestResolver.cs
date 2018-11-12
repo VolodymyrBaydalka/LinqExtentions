@@ -105,26 +105,34 @@ namespace DuncanApps.DataView
 
         protected virtual IQueryable ResolveOrderBy(IQueryable q, IEnumerable<OrderClause> clauses)
         {
-            var ordered = false;
+            var isFirstClause = true;
             var param = Expression.Parameter(q.ElementType, "x");
 
             foreach (var clause in clauses)
             {
-                var methodName = clause.Direction == ListSortDirection.Ascending
-                    ? (ordered ? nameof(Queryable.ThenBy) : nameof(Queryable.OrderBy))
-                    : (ordered ? nameof(Queryable.ThenByDescending) : nameof(Queryable.OrderByDescending));
-
-
-                var lambda = clause.Field == ItemKeyword ? Expression.Lambda(param, param)
-                        : Expression.Lambda(Expression.PropertyOrField(param, clause.Field), param);
-
-                q = q.Provider.CreateQuery(Expression.Call(typeof(Queryable), methodName, 
-                    new[] { q.ElementType, lambda.Body.Type }, q.Expression, Expression.Quote(lambda)));
-
-                ordered = true;
+                q = ResolveOrderBy(q, clause, isFirstClause);
+                isFirstClause = false;
             }
 
             return q;
+        }
+
+        protected virtual IQueryable ResolveOrderBy(IQueryable q, OrderClause clause, bool isFirstClause)
+        {
+            var methodName = clause.Direction == ListSortDirection.Ascending
+                ? (isFirstClause ? nameof(Queryable.OrderBy) : nameof(Queryable.ThenBy))
+                : (isFirstClause ? nameof(Queryable.OrderByDescending) : nameof(Queryable.ThenByDescending));
+
+            var lambda = BuildOrderByExpression(Expression.Parameter(q.ElementType, "x"), clause);
+
+            return q.Provider.CreateQuery(Expression.Call(typeof(Queryable), methodName,
+                new[] { q.ElementType, lambda.Body.Type }, q.Expression, Expression.Quote(lambda)));
+        }
+
+        protected virtual LambdaExpression BuildOrderByExpression(ParameterExpression param, OrderClause clause)
+        {
+            return clause.Field == ItemKeyword ? Expression.Lambda(param, param)
+                : Expression.Lambda(Expression.PropertyOrField(param, clause.Field), param);
         }
 
         protected virtual IQueryable ResolveSkipTake(IQueryable q, int skip, int take)
@@ -141,7 +149,7 @@ namespace DuncanApps.DataView
         protected virtual IQueryable ResolveWhere(IQueryable q, IWhereClause where)
         {
             var param = Expression.Parameter(q.ElementType, "x");
-            var expr = BuildExpression(param, where);
+            var expr = BuildWhereExpression(param, where);
 
             if (expr == null)
                 return q;
@@ -150,13 +158,13 @@ namespace DuncanApps.DataView
                 new[] { q.ElementType }, q.Expression, Expression.Lambda(expr, param)));
         }
 
-        protected virtual Expression BuildExpression(ParameterExpression param, GroupedClause clause)
+        protected virtual Expression BuildWhereExpression(ParameterExpression param, GroupedClause clause)
         {
             Expression result = null;
 
             foreach (var w in clause.SubClauses)
             {
-                var exp = BuildExpression(param, w);
+                var exp = BuildWhereExpression(param, w);
 
                 if (exp == null)
                     continue;
@@ -167,17 +175,17 @@ namespace DuncanApps.DataView
             return result;
         }
 
-        protected virtual Expression BuildExpression(ParameterExpression param, IWhereClause clause)
+        protected virtual Expression BuildWhereExpression(ParameterExpression param, IWhereClause clause)
         {
             if (clause is WhereClause where)
-                return BuildExpression(param, where);
+                return BuildWhereExpression(param, where);
             if (clause is GroupedClause grouped)
-                return BuildExpression(param, grouped);
+                return BuildWhereExpression(param, grouped);
 
             throw new NotSupportedException("clause");
         }
 
-        protected virtual Expression BuildExpression(ParameterExpression param, WhereClause where)
+        protected virtual Expression BuildWhereExpression(ParameterExpression param, WhereClause where)
         {
             var left = where.Field == ItemKeyword ? param : (Expression)Expression.PropertyOrField(param, where.Field);
             var itemType = HandleCollection ? GetCollectionItemType(left.Type) : null;
