@@ -121,7 +121,7 @@ namespace DuncanApps.DataView.Tests
 
         class CustomRequestResolver : RequestResolver
         {
-            protected override Expression BuildExpression(ParameterExpression param, WhereClause where)
+            protected override Expression BuildWhereExpression(ParameterExpression param, WhereClause where)
             {
                 if ("date".Equals(where.Field, StringComparison.OrdinalIgnoreCase))
                 {
@@ -134,7 +134,7 @@ namespace DuncanApps.DataView.Tests
                     return FromLambda<Item, bool>(i => i.Name.EndsWith("4") || i.Name.EndsWith("3"), param);
                 }
 
-                return base.BuildExpression(param, where);
+                return base.BuildWhereExpression(param, where);
             }
         }
 
