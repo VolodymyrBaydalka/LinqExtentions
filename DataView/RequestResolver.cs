@@ -38,12 +38,12 @@ namespace DuncanApps.DataView
         #endregion
 
         #region Implementation
-        public void RegisterConverter<T>(Func<object, T> converter)
+        public void RegisterValueConverter<T>(Func<object, T> converter)
         {
             _converters.Add(typeof(T), x => converter(x));
         }
 
-        public void RegisterConverter(Type type, Func<object, object> converter)
+        public void RegisterValueConverter(Type type, Func<object, object> converter)
         {
             _converters.Add(type, converter);
         }
@@ -187,7 +187,7 @@ namespace DuncanApps.DataView
 
         protected virtual Expression BuildWhereExpression(ParameterExpression param, WhereClause where)
         {
-            var left = where.Field == ItemKeyword ? param : (Expression)Expression.PropertyOrField(param, where.Field);
+            var left = GetFieldExpression(param, where.Field);
             var itemType = HandleCollection ? GetCollectionItemType(left.Type) : null;
 
             if (itemType != null)
@@ -196,11 +196,16 @@ namespace DuncanApps.DataView
                 var itemRight = Expression.Constant(GetValue(itemLeft, where), itemType);
                 var itemLambda = Expression.Lambda(where.Operator.BuildExpression(itemLeft, itemRight), itemLeft);
 
-                return Expression.Call(typeof(Enumerable), "Any", new[] { itemType }, left, itemLambda);
+                return Expression.Call(typeof(Enumerable), nameof(Enumerable.Any), new[] { itemType }, left, itemLambda);
             }
 
             var right = Expression.Constant(GetValue(left, where), left.Type);
             return where.Operator.BuildExpression(left, right);
+        }
+
+        protected virtual Expression GetFieldExpression(ParameterExpression param, string field)
+        {
+            return field == ItemKeyword ? param : (Expression)Expression.PropertyOrField(param, field);
         }
 
         protected virtual object GetValue(Expression left, WhereClause where)

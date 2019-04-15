@@ -113,13 +113,14 @@ namespace DuncanApps.DataView.Tests
             Assert.AreEqual(where7, new WhereClause { Field = "field1", Operator = WhereOperator.IsEqualTo, Value = "test \\\"value" });
 
 
-            var where8 = ParseHelper.PasreWhereClause(" _field1 eq \"test \\\"value\" ");
-            Assert.AreEqual(where8, new WhereClause { Field = "_field1", Operator = WhereOperator.IsEqualTo, Value = "test \"value" });
+            var where8 = ParseHelper.PasreWhereClause(" _field_1 eq \"test \\\"value\" ");
+            Assert.AreEqual(where8, new WhereClause { Field = "_field_1", Operator = WhereOperator.IsEqualTo, Value = "test \"value" });
 
             var where9 = ParseHelper.PasreWhereClause("field1 eq -10.88326");
-
             Assert.AreEqual(where9, new WhereClause { Field = "field1", Operator = WhereOperator.IsEqualTo, Value = "-10.88326" });
 
+            var where10 = ParseHelper.PasreWhereClause(" _field_1 eq _value");
+            Assert.AreEqual(where10, new WhereClause { Field = "_field_1", Operator = WhereOperator.IsEqualTo, Value = "_value" });
         }
     }
 }
