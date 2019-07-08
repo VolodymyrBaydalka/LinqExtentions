@@ -74,6 +74,17 @@ namespace DuncanApps.DataView
             return Combine(left, WhereLogic.And, new WhereClause(field, op, value));
         }
 
+        public static WhereClause FindWhereClause(this IWhereClause clause, string fieldName, StringComparison comparisonType = StringComparison.Ordinal)
+        {
+            if (clause is WhereClause where && string.Equals(where.Field, fieldName, comparisonType))
+                return where;
+
+            if (clause is GroupedClause grouped)
+                return grouped.SubClauses.Select(x => x.FindWhereClause(fieldName, comparisonType)).FirstOrDefault();
+
+            return null;
+        }
+
         public static IWhereClause Reduce(this IWhereClause clause)
         {
             if (clause is GroupedClause grouped)

@@ -199,13 +199,18 @@ namespace DuncanApps.DataView
             {
                 var itemLeft = Expression.Parameter(itemType, "y");
                 var itemRight = Expression.Constant(GetValue(itemLeft, where), itemType);
-                var itemLambda = Expression.Lambda(where.Operator.BuildExpression(itemLeft, itemRight), itemLeft);
+                var itemLambda = Expression.Lambda(BuildOperatorExpression(where.Operator, itemLeft, itemRight), itemLeft);
 
                 return Expression.Call(typeof(Enumerable), nameof(Enumerable.Any), new[] { itemType }, left, itemLambda);
             }
 
             var right = Expression.Constant(GetValue(left, where), left.Type);
-            return where.Operator.BuildExpression(left, right);
+            return BuildOperatorExpression(where.Operator, left, right);
+        }
+
+        protected virtual Expression BuildOperatorExpression(WhereOperator @operator, Expression left, Expression right)
+        {
+            return @operator.BuildExpression(left, right);
         }
 
         protected virtual Expression GetFieldExpression(ParameterExpression param, string field)
@@ -236,12 +241,12 @@ namespace DuncanApps.DataView
             return swaper.Visit(expr.Body);
         }
 
-        private static bool IsSimpleType(Type type)
+        protected static bool IsSimpleType(Type type)
         {
             return type.IsPrimitive || type.IsEnum || type == typeof(string);
         }
 
-        private static Type GetCollectionItemType(Type type)
+        protected static Type GetCollectionItemType(Type type)
         {
             if (type.IsArray)
                 return type.GetElementType();
