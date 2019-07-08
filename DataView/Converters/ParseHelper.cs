@@ -30,12 +30,12 @@ namespace DuncanApps.DataView.Converters
         {
         }
 
-        public static IWhereClause PasreWhereClause(string text)
+        public static IWhereClause PasreWhereClause(string text, bool handleNullValue = false)
         {
             if(string.IsNullOrEmpty(text))
                 return null;
 
-            return new FilterParser(text).Parse();
+            return new FilterParser(text, handleNullValue).Parse();
         }
 
         public static IList<OrderClause> PasreOrderClause(string text)

@@ -35,6 +35,11 @@ namespace DuncanApps.DataView
         /// Indicates whether resolver should detect collections and aplly filters to collection items.
         /// </summary>
         public bool HandleCollection { get; set; } = true;
+
+        /// <summary>
+        /// Indicates whether resolver should detect collections and aplly filters to collection items.
+        /// </summary>
+        public bool ParseEnums { get; set; } = false;
         #endregion
 
         #region Implementation
@@ -214,6 +219,10 @@ namespace DuncanApps.DataView
                 return convert(where.Value);
 
             var convertType = Nullable.GetUnderlyingType(left.Type) ?? left.Type;
+
+            if (ParseEnums && convertType.IsEnum && where.Value is string stringValue)
+                return Enum.Parse(convertType, stringValue);
+
             return Convert.ChangeType(where.Value, convertType);
         }
 
