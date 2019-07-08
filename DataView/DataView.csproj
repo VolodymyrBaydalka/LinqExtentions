@@ -8,7 +8,7 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Copyright>Copyright © Volodymyr Baydalka 2019</Copyright>
-    <PackageLicenseUrl>https://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
+    <PackageLicenseUrl></PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/zVolodymyr/LinqExtentions</PackageProjectUrl>
     <RepositoryUrl>https://github.com/zVolodymyr/LinqExtentions</RepositoryUrl>
     <Description>Utility paging library</Description>
@@ -20,6 +20,7 @@
     <RootNamespace>DuncanApps.DataView</RootNamespace>
     <PackageReleaseNotes>splitted the ordering method for better customization</PackageReleaseNotes>
     <RepositoryType />
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
