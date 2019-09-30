@@ -35,15 +35,20 @@ namespace DuncanApps.DataView
         /// Indicates whether resolver should detect collections and aplly filters to collection items.
         /// </summary>
         public bool HandleCollection { get; set; } = true;
+
+        /// <summary>
+        /// Indicates whether resolver should detect collections and aplly filters to collection items.
+        /// </summary>
+        public bool ParseEnums { get; set; } = false;
         #endregion
 
         #region Implementation
-        public void RegisterConverter<T>(Func<object, T> converter)
+        public void RegisterValueConverter<T>(Func<object, T> converter)
         {
             _converters.Add(typeof(T), x => converter(x));
         }
 
-        public void RegisterConverter(Type type, Func<object, object> converter)
+        public void RegisterValueConverter(Type type, Func<object, object> converter)
         {
             _converters.Add(type, converter);
         }
@@ -203,20 +208,30 @@ namespace DuncanApps.DataView
 
         protected virtual Expression BuildWhereExpression(ParameterExpression param, WhereClause where)
         {
-            var left = where.Field == ItemKeyword ? param : (Expression)Expression.PropertyOrField(param, where.Field);
+            var left = GetFieldExpression(param, where.Field);
             var itemType = HandleCollection ? GetCollectionItemType(left.Type) : null;
 
             if (itemType != null)
             {
                 var itemLeft = Expression.Parameter(itemType, "y");
                 var itemRight = Expression.Constant(GetValue(itemLeft, where), itemType);
-                var itemLambda = Expression.Lambda(where.Operator.BuildExpression(itemLeft, itemRight), itemLeft);
+                var itemLambda = Expression.Lambda(BuildOperatorExpression(where.Operator, itemLeft, itemRight), itemLeft);
 
-                return Expression.Call(typeof(Enumerable), "Any", new[] { itemType }, left, itemLambda);
+                return Expression.Call(typeof(Enumerable), nameof(Enumerable.Any), new[] { itemType }, left, itemLambda);
             }
 
             var right = Expression.Constant(GetValue(left, where), left.Type);
-            return where.Operator.BuildExpression(left, right);
+            return BuildOperatorExpression(where.Operator, left, right);
+        }
+
+        protected virtual Expression BuildOperatorExpression(WhereOperator @operator, Expression left, Expression right)
+        {
+            return @operator.BuildExpression(left, right);
+        }
+
+        protected virtual Expression GetFieldExpression(ParameterExpression param, string field)
+        {
+            return field == ItemKeyword ? param : (Expression)Expression.PropertyOrField(param, field);
         }
 
         protected virtual object GetValue(Expression left, WhereClause where)
@@ -225,6 +240,10 @@ namespace DuncanApps.DataView
                 return convert(where.Value);
 
             var convertType = Nullable.GetUnderlyingType(left.Type) ?? left.Type;
+
+            if (ParseEnums && convertType.IsEnum && where.Value is string stringValue)
+                return Enum.Parse(convertType, stringValue);
+
             return Convert.ChangeType(where.Value, convertType);
         }
 
@@ -238,12 +257,12 @@ namespace DuncanApps.DataView
             return swaper.Visit(expr.Body);
         }
 
-        private static bool IsSimpleType(Type type)
+        protected static bool IsSimpleType(Type type)
         {
             return type.IsPrimitive || type.IsEnum || type == typeof(string);
         }
 
-        private static Type GetCollectionItemType(Type type)
+        protected static Type GetCollectionItemType(Type type)
         {
             if (type.IsArray)
                 return type.GetElementType();

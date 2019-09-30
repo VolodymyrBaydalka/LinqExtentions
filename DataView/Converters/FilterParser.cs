@@ -17,13 +17,18 @@ namespace DuncanApps.DataView.Converters
             EoF
         }
 
+        private const string nullValue = "null";
+
         private string _text;
         private int _pos = 0;
-        private StringBuilder _buf = new StringBuilder();
+        private readonly StringBuilder _buf = new StringBuilder();
+        private readonly bool _handleNullValue;
 
-        public FilterParser(string text)
+
+        public FilterParser(string text, bool handleNullValue = false)
         {
             _text = text;
+            _handleNullValue = handleNullValue;
         }
 
         public IWhereClause Parse()
@@ -62,15 +67,18 @@ namespace DuncanApps.DataView.Converters
                 }
                 else if (token.Key == TokenType.Word)
                 {
+                    var opValue = ParseHelper.ParseWhereOperator(ExpectToken(TokenType.Word).Value);
+                    var valueToken = ExpectToken(TokenType.Word, TokenType.Number, TokenType.String);
+
                     clause = new WhereClause
                     {
                         Field = token.Value,
-                        Operator = ParseHelper.ParseWhereOperator(ExpectToken(TokenType.Word).Value),
-                        Value = ExpectToken(TokenType.Word, TokenType.Number, TokenType.String).Value
+                        Operator = opValue,
+                        Value = (_handleNullValue && valueToken.Key == TokenType.Word && valueToken.Value == nullValue) ? null : valueToken.Value
                     };
                 }
 
-                if(clause != null)
+                if (clause != null)
                     result = result == null ? clause : result.Combine(logic, clause);
             }
             while (token.Key != TokenType.EoF);

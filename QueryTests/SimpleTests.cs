@@ -95,7 +95,7 @@ namespace DuncanApps.DataView.Tests
         {
             var resolver = new RequestResolver();
 
-            resolver.RegisterConverter(x =>
+            resolver.RegisterValueConverter(x =>
             {
                 return "null".Equals(x) ? null : Convert.ToString(x);
             });
