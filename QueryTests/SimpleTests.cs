@@ -180,5 +180,25 @@ namespace DuncanApps.DataView.Tests
             Assert.AreEqual(subset.Taken, 0);
             Assert.AreEqual(subset.Items[0].Id, 2);
         }
+
+        [TestMethod]
+        public void SelectTest()
+        {
+            var request = new DataViewRequest
+            {
+                Skip = 1,
+                Take = 2,
+                Select = new[] { nameof(Item.Id), nameof(Item.Name) }
+            };
+
+            var subset = testData.AsQueryable().ToDataView(request);
+
+            Assert.AreEqual(subset.Total, 6);
+            Assert.AreEqual(subset.Skipped, 1);
+            Assert.AreEqual(subset.Taken, 2);
+            Assert.AreEqual(subset.Items.Count, 2);
+            Assert.AreEqual(subset.Items[0].Id, 2);
+            Assert.AreEqual(subset.Items[1].Id, 3);
+        }
     }
 }

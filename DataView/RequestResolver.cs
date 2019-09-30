@@ -76,6 +76,9 @@ namespace DuncanApps.DataView
             q = ResolveOrderBy(q, orderBy);
             q = ResolveSkipTake(q, request.Skip, request.Take);
 
+            if (request.Select?.Any() ?? false)
+                q = ResolveSelect(q, request.Select);
+
             foreach (var item in q)
             {
                 result.Items.Add((T)item);
@@ -156,6 +159,19 @@ namespace DuncanApps.DataView
 
             return q.Provider.CreateQuery(Expression.Call(typeof(Queryable), nameof(Queryable.Where),
                 new[] { q.ElementType }, q.Expression, Expression.Lambda(expr, param)));
+        }
+
+        protected virtual IQueryable ResolveSelect(IQueryable q, IEnumerable<string> select)
+        {
+            var elemType = q.ElementType;
+            var param = Expression.Parameter(elemType, "x");
+
+            var bindings = select.Select(p => Expression.Bind(elemType.GetProperty(p), Expression.PropertyOrField(param, p)));
+
+            var body = Expression.MemberInit(Expression.New(elemType), bindings);
+
+            return q.Provider.CreateQuery(Expression.Call(typeof(Queryable), nameof(Queryable.Select), 
+                new[] { q.ElementType, q.ElementType }, q.Expression, Expression.Lambda(body, param)));
         }
 
         protected virtual Expression BuildWhereExpression(ParameterExpression param, GroupedClause clause)

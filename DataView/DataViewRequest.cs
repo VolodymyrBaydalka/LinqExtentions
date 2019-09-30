@@ -12,5 +12,6 @@ namespace DuncanApps.DataView
         public IWhereClause Where { get; set; }
         [TypeConverter(typeof(OrderClausesConverter))]
         public IList<OrderClause> OrderBy { get; set; }
+        public IList<string> Select { get; set; }
     }
 }
