@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -55,6 +56,13 @@ namespace DuncanApps.DataView.Converters
             }
 
             return result;
+        }
+
+        public static IList<string> PasreList(string text)
+        {
+            return text
+                .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => x.Trim()).ToArray();
         }
 
         public static WhereOperator ParseWhereOperator(string text)
